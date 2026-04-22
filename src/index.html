@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+body {
+  margin: 0px; overflow: hidden; background-color: black;
+}
+canvas.main_canvas {
+  image-rendering: pixelated;
+  border: 0px none;
+  background-color: white;
+  /*width: 100%;*/
+  height: 100%;
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+img.hidden_img {
+  display:none;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+  </style>
+</head>
+<body>
+<canvas id="main_canvas" class="main_canvas" height=640 width=640>javascript is disabled, no canvas.</canvas>
+<script src="root.wasm.base64.js">
+</script>
+<script>
+  imports = {};
+  const ctx = main_canvas.getContext('2d')
+  imports["set_color"] = (r,g,b,a) => { ctx.fillStyle = `rgba(${r},${g},${b},${a})`; }
+  imports["draw_rectangle"] = (x,y,x_,y_) => { ctx.fillRect(x,y,x_,y_); }
+  let wasm_export={};
+  WebAssembly.instantiate(wasm_base64, {"env":imports})
+    .then (obj => { if (obj.instance.exports._start !== undefined) {obj.instance.exports._start()} ; wasm_export=obj.instance.exports; });
+</script>
+</body>
+
+</html>
